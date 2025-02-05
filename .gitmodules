@@ -1,0 +1,6 @@
+[submodule "llvm-project"]
+	path = llvm-project
+	url = https://github.com/oro-os/llvm-project.git
+[submodule "rust"]
+	path = rust
+	url = https://github.com/oro-os/rust.git

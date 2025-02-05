@@ -1,0 +1,48 @@
+name: Build Toolchain
+on:
+    push:
+      branches:
+        - master
+
+env:
+    RUST_BACKTRACE: full
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                submodules: true
+            - name: Install Dependencies
+              shell: bash
+              run: sudo apt-get update && sudo apt-get install -y build-essential git cmake ninja-build python3
+            # Get the cached build artifacts
+            - name: Cache Build Artifacts
+              uses: actions/cache@v4
+              with:
+                path: /oro-toolchain
+                key: ${{runner.os}}-oro-toolchain-build
+            - name: Build LLVM
+              shell: bash
+              run: |
+                mkdir -p /home/runner/oro-toolchain/llvm
+                cmake -G Ninja -S llvm-project/llvm -B /home/runner/oro-toolchain/llvm -GNinja -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS="clang;lld;lldb" -DLLVM_TARGETS_TO_BUILD="X86"
+                ninja -C /home/runner/oro-toolchain/llvm
+            - name: Copy Rust Config
+              shell: bash
+              run: cp rust-config.yaml rust/config.toml
+            - name: Build Rust Compiler
+              shell: bash
+              run: mkdir -p /home/runner/oro-toolchain/rust && cd rust && ./x.py build compiler --stage 3
+            - name: Build Rust Libraries
+              shell: bash
+              run: mkdir -p /home/runner/oro-toolchain/rust && cd rust && ./x.py build library --stage 3
+            - name: Upload Artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                name: oro-rust-toolchain-${{github.run_id}}
+                path: /home/runner/oro-toolchain/rust/host/stage3
+                if-no-files-found: error
+                compression-level: 9
+                overwrite: true
