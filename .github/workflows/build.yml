@@ -27,7 +27,7 @@ jobs:
               shell: bash
               run: |
                 mkdir -p /home/runner/oro-toolchain/llvm
-                cmake -G Ninja -S llvm-project/llvm -B /home/runner/oro-toolchain/llvm -GNinja -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS="clang;lld;lldb" -DLLVM_TARGETS_TO_BUILD="X86"
+                cmake -G Ninja -S llvm-project/llvm -B /home/runner/oro-toolchain/llvm -GNinja -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS="clang;lld" -DLLVM_TARGETS_TO_BUILD="X86"
                 ninja -C /home/runner/oro-toolchain/llvm
             - name: Copy Rust Config
               shell: bash
