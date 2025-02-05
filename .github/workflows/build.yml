@@ -31,7 +31,7 @@ jobs:
                 ninja -C /home/runner/oro-toolchain/llvm
             - name: Copy Rust Config
               shell: bash
-              run: cp rust-config.yaml rust/config.toml
+              run: cp rust-config.toml rust/config.toml
             - name: Build Rust Compiler
               shell: bash
               run: mkdir -p /home/runner/oro-toolchain/rust && cd rust && ./x.py build compiler --stage 3
