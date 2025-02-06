@@ -17,7 +17,9 @@ mkdir rustc-src/rust
 mkdir -p src/rust/src/llvm-project
 
 rsync -av rustc-src/rust_/compiler/ rustc-src/rust/compiler/
-rsync -av src/rust_/src/llvm-project/libunwind src/rust/src/llvm-project/libunwind
+if [ -d src/rust_/src/llvm-project/libunwind ]; then
+	rsync -av src/rust_/src/llvm-project/libunwind src/rust/src/llvm-project/libunwind
+fi
 rsync -av src/rust_/library/ src/rust/library/
 
 rm rustc-src/rust_
