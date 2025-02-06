@@ -20,7 +20,7 @@ jobs:
             # Get the cached build artifacts
             - name: Cache Build Artifacts
               id: cache-restore
-              uses: actions/cache@v4
+              uses: actions/cache/restore@v4
               with:
                 path: /home/runner/oro-toolchain/
                 key: ${{runner.os}}-oro-toolchain-build
