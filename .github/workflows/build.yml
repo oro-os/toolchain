@@ -21,7 +21,7 @@ jobs:
             - name: Cache Build Artifacts
               uses: actions/cache@v4
               with:
-                path: /oro-toolchain
+                path: /home/runner/oro-toolchain/
                 key: ${{runner.os}}-oro-toolchain-build
             - name: Build LLVM
               shell: bash
