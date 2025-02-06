@@ -10,12 +10,20 @@ target = ["x86_64-unknown-linux-gnu", "x86_64-unknown-oro-elf"]
 extended = true
 tools = ["cargo", "cargo-fmt", "clippy", "rustfmt", "analysis", "lld-wrapper"]
 build-dir = "/home/runner/oro-toolchain/rust"
+verbose = 2
+docs = false
+compiler-docs = false
+sanitizers = false
 
 [rust]
 incremental = true
 download-rustc = false
 description = "Experimental Rust toolchain for the Oro Operating System"
 omit-git-hash = true
+channel = "dev"
+strip = true
+optimize = 3
+debug = false
 
 [target.x86_64-unknown-oro-elf]
 llvm-config = "/home/runner/oro-toolchain/llvm/bin/llvm-config"
