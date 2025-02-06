@@ -23,7 +23,7 @@ jobs:
               uses: actions/cache/restore@v4
               with:
                 path: /home/runner/oro-toolchain/
-                key: ${{runner.os}}-oro-toolchain-build
+                key: ${{runner.os}}-artifacts
             - name: Build LLVM
               shell: bash
               run: |
