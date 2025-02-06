@@ -19,6 +19,7 @@ jobs:
               run: sudo apt-get update && sudo apt-get install -y build-essential git cmake ninja-build python3
             # Get the cached build artifacts
             - name: Cache Build Artifacts
+              id: cache-restore
               uses: actions/cache@v4
               with:
                 path: /home/runner/oro-toolchain/
@@ -38,6 +39,12 @@ jobs:
             - name: Build Rust Libraries
               shell: bash
               run: mkdir -p /home/runner/oro-toolchain/rust && cd rust && ./x.py build library --stage 3
+            # Save the cache BEFORE we stage for artifact upload.
+            - name: Save Cache
+              uses: actions/cache/save@v4
+              with:
+                path: /home/runner/oro-toolchain/
+                key: ${{ steps.cache-restore.outputs.cache-primary-key }}
             - name: Stage source directories
               shell: bash
               run: ./stage-rust-src.sh /home/runner/oro-toolchain/rust/host/stage3
