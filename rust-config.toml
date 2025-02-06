@@ -25,6 +25,10 @@ strip = true
 optimize = 3
 debug = false
 
+[target.x86_64-unknown-linux-gnu]
+llvm-config = "/home/runner/oro-toolchain/llvm/bin/llvm-config"
+llvm-has-rust-patches = false
+
 [target.x86_64-unknown-oro-elf]
 llvm-config = "/home/runner/oro-toolchain/llvm/bin/llvm-config"
 llvm-has-rust-patches = false
