@@ -9,7 +9,7 @@ host = ["x86_64-unknown-linux-gnu"]
 target = ["x86_64-unknown-linux-gnu", "x86_64-unknown-oro-elf"]
 extended = true
 tools = ["cargo", "cargo-fmt", "clippy", "rustfmt", "analysis", "lld-wrapper"]
-build-dir = "/home/runner/oro-toolchain/rust"
+build-dir = "../build/rust"
 verbose = 2
 docs = false
 compiler-docs = false
@@ -26,10 +26,10 @@ optimize = 3
 debug = false
 
 [target.x86_64-unknown-linux-gnu]
-llvm-config = "/home/runner/oro-toolchain/llvm/bin/llvm-config"
+llvm-config = "../build/llvm/bin/llvm-config"
 llvm-has-rust-patches = false
 
 [target.x86_64-unknown-oro-elf]
-llvm-config = "/home/runner/oro-toolchain/llvm/bin/llvm-config"
+llvm-config = "../build/llvm/bin/llvm-config"
 llvm-has-rust-patches = false
 optimized-compiler-builtins = false
