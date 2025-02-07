@@ -20,7 +20,7 @@ jobs:
             # Get the cached build artifacts
             - name: Restore cache
               id: cache-restore
-              uses: actions/cache/restore@v4
+              uses: actions/cache/restore@v4.1.2
               with:
                 path: build/
                 key: ${{runner.os}}-artifacts-${{github.run_id}}-${{github.run_attempt}}
@@ -43,7 +43,7 @@ jobs:
               run: mkdir -p build/rust && cd rust && ./x.py build library --stage 3
             # Save the cache BEFORE we stage for artifact upload.
             - name: Save Cache
-              uses: actions/cache/save@v4
+              uses: actions/cache/save@v4.1.2
               with:
                 path: build/
                 key: ${{ steps.cache-restore.outputs.cache-primary-key }}
