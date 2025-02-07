@@ -18,7 +18,7 @@ jobs:
               shell: bash
               run: sudo apt-get update && sudo apt-get install -y build-essential git cmake ninja-build python3
             # Get the cached build artifacts
-            - name: Cache Build Artifacts
+            - name: Restore cache
               id: cache-restore
               uses: actions/cache/restore@v4
               with:
@@ -30,8 +30,7 @@ jobs:
             - name: Build LLVM
               shell: bash
               run: |
-                mkdir -p /home/runner/oro-toolchain/llvm
-                cmake -G Ninja -S llvm-project/llvm -B /home/runner/oro-toolchain/llvm -GNinja -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS="clang;lld" -DLLVM_TARGETS_TO_BUILD="X86"
+                if [ ! -d /home/runner/oro-toolchain/llvm ]; then mkdir -p /home/runner/oro-toolchain/llvm; cmake -G Ninja -S llvm-project/llvm -B /home/runner/oro-toolchain/llvm -GNinja -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS="clang;lld" -DLLVM_TARGETS_TO_BUILD="X86"; fi
                 ninja -C /home/runner/oro-toolchain/llvm
             - name: Copy Rust Config
               shell: bash
