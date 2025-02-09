@@ -14,6 +14,7 @@ verbose = 2
 docs = false
 compiler-docs = false
 sanitizers = false
+debug = true
 
 [rust]
 incremental = true
