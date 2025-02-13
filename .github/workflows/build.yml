@@ -37,7 +37,7 @@ jobs:
               run: cp rust-config.toml rust/config.toml
             - name: Build Rust
               shell: bash
-              run: mkdir -p build/rust && cd rust && ./x.py build compiler library rustfmt clippy cargo --stage 3
+              run: mkdir -p build/rust && cd rust && ./x.py build --stage 3
             # Save the cache BEFORE we stage for artifact upload.
             - name: Save Cache
               uses: actions/cache/save@v4
