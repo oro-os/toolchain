@@ -37,7 +37,7 @@ jobs:
               run: cp rust-config.toml rust/config.toml
             - name: Build Rust
               shell: bash
-              run: mkdir -p build/rust build/dist && cd rust && ./x.py install
+              run: mkdir -p build/rust build/dist && cd rust && env -u GITHUB_ACTIONS ./x.py install
             # Save the cache BEFORE we stage for artifact upload.
             - name: Save Cache
               uses: actions/cache/save@v4
