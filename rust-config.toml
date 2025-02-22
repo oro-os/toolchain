@@ -14,6 +14,12 @@ verbose = 2
 docs = false
 compiler-docs = false
 sanitizers = false
+build-stage = 3
+install-stage = 3
+
+[install]
+prefix = "../build/dist"
+sysconfdir = "etc"
 
 [rust]
 incremental = true
@@ -24,6 +30,7 @@ channel = "dev"
 strip = true
 optimize = 3
 debug = true
+dist-src = false
 
 [target.x86_64-unknown-linux-gnu]
 llvm-config = "../build/llvm/bin/llvm-config"
