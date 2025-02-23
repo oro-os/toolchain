@@ -18,7 +18,7 @@ jobs:
           submodules: true
       - name: Install Dependencies
         shell: bash
-        run: sudo apt-get update && sudo apt-get install -y build-essential git cmake ninja-build python3 cache
+        run: sudo apt-get update && sudo apt-get install -y build-essential git cmake ninja-build python3 ccache
       # Get the cached build artifacts
       - name: Setup Cache
         id: cache
