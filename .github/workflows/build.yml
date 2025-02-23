@@ -1,54 +1,85 @@
 name: Build Toolchain
 on:
-    push:
-      branches:
-        - master
+  push:
+    branches:
+      - master
 
 env:
-    RUST_BACKTRACE: full
+  RUST_BACKTRACE: full
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-              with:
-                submodules: true
-            - name: Install Dependencies
-              shell: bash
-              run: sudo apt-get update && sudo apt-get install -y build-essential git cmake ninja-build python3
-            # Get the cached build artifacts
-            - name: Restore cache
-              id: cache-restore
-              uses: actions/cache/restore@v4
-              with:
-                path: build/
-                key: ${{runner.os}}-artifacts-${{github.run_id}}-${{github.run_attempt}}
-                restore-keys: |
-                  ${{runner.os}}-artifacts-${{github.run_id}}-
-                  ${{runner.os}}-artifacts-
-            - name: Build LLVM
-              shell: bash
-              run: |
-                if [ ! -d build/llvm ]; then mkdir -p build/llvm; cmake -G Ninja -S llvm-project/llvm -B build/llvm -GNinja -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS="clang;lld" -DLLVM_TARGETS_TO_BUILD="X86"; fi
-                ninja -C build/llvm
-            - name: Copy Rust Config
-              shell: bash
-              run: cp rust-config.toml rust/config.toml
-            - name: Build Rust
-              shell: bash
-              run: mkdir -p build/rust build/dist && cd rust && env -u GITHUB_ACTIONS ./x.py install
-            # Save the cache BEFORE we stage for artifact upload.
-            - name: Save Cache
-              uses: actions/cache/save@v4
-              with:
-                path: build/
-                key: ${{ steps.cache-restore.outputs.cache-primary-key }}
-            - name: Upload Artifacts
-              uses: actions/upload-artifact@v4
-              with:
-                name: oro-rust-toolchain-${{github.run_id}}
-                path: build/dist
-                if-no-files-found: error
-                compression-level: 9
-                overwrite: true
+  build-llvm:
+    runs-on: ubuntu-latest
+    outputs:
+      cache-primary-key: ${{ runner.os }}-artifacts-llvm-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install Dependencies
+        shell: bash
+        run: sudo apt-get update && sudo apt-get install -y build-essential git cmake ninja-build python3 cache
+      # Get the cached build artifacts
+      - name: Setup Cache
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: build/llvm/
+          key: ${{runner.os}}-artifacts-llvm-${{github.run_id}}-${{github.run_attempt}}
+          restore-keys: |
+            ${{runner.os}}-artifacts-llvm-${{github.run_id}}-
+            ${{runner.os}}-artifacts-llvm-
+      - name: Build LLVM
+        shell: bash
+        run: |
+          export CCACHE_DIR="$(pwd)/build/llvm/.ccache"
+          export CCACHE_COMPRESS=1
+          export CCACHE_COMPRESSLEVEL=6
+          export CCACHE_MAXSIZE=400M
+          mkdir -p build/llvm/.ccache
+          ccache -z
+          cmake -G Ninja -S llvm-project/llvm -B build/llvm -GNinja -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS="clang;lld" -DLLVM_TARGETS_TO_BUILD="X86" -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+          ninja -C build/llvm
+          ccache -s
+
+  build-rust:
+    runs-on: ubuntu-latest
+    needs: build-llvm
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install Dependencies
+        shell: bash
+        run: sudo apt-get update && sudo apt-get install -y build-essential git cmake ninja-build python3
+      - name: Restore LLVM Cache
+        id: llvm-cache-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: build/llvm/
+          key: ${{ needs.build-llvm.outputs.cache-primary-key }}
+          restore-keys: ${{ needs.build-llvm.outputs.cache-primary-key }}
+          fail-on-cache-miss: true
+      - name: Set up Rust Cache
+        id: rust-cache
+        uses: actions/cache@v4
+        with:
+          path: build/rust/
+          key: ${{ runner.os }}-artifacts-rust-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            ${{ runner.os }}-artifacts-rust-${{ github.run_id }}-
+            ${{ runner.os }}-artifacts-rust-
+      - name: Copy Rust Config
+        shell: bash
+        run: cp rust-config.toml rust/config.toml
+      - name: Build Rust
+        shell: bash
+        run: mkdir -p build/rust build/dist && cd rust && env -u GITHUB_ACTIONS ./x.py install
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: oro-rust-toolchain-${{github.run_id}}
+          path: build/dist
+          if-no-files-found: error
+          compression-level: 9
+          overwrite: true
