@@ -97,6 +97,13 @@ jobs:
       - name: Copy Rust Config
         shell: bash
         run: cp ${{ matrix.os.config }} rust/config.toml
+      - name: Set Library Paths
+        if: matrix.os.name == 'apple'
+        shell: bash
+        run: |
+          echo 'LDFLAGS=-L/opt/homebrew/lib' >> $GITHUB_ENV
+          echo 'CPPFLAGS=-I/opt/homebrew/include' >> $GITHUB_ENV
+          echo 'LIBRARY_PATH=/usr/local/lib' >> $GITHUB_ENV
       - name: Build Rust
         shell: bash
         run: |
