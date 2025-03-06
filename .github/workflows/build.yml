@@ -10,9 +10,14 @@ env:
 jobs:
   build-llvm:
     strategy:
+      fail-fast: true
       matrix:
-        os: [ubuntu-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
+        os:
+          - runner: ubuntu-latest
+            name: linux
+          - runner: macos-latest-xlarge
+            name: apple
+    runs-on: ${{ matrix.os.runner }}
     outputs:
       cache-primary-key: ${{ runner.os }}-artifacts-llvm-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
@@ -20,11 +25,11 @@ jobs:
         with:
           submodules: true
       - name: Install Dependencies
-        if: startsWith(matrix.os, 'ubuntu')
+        if: matrix.os.name == 'linux'
         shell: bash
         run: sudo apt-get update && sudo apt-get install -y build-essential git cmake ninja-build python3 ccache
       - name: Install Dependencies
-        if: startsWith(matrix.os, 'macos')
+        if: matrix.os.name == 'apple'
         shell: bash
         run: brew install ccache git cmake ninja
       - name: Setup Cache
@@ -51,17 +56,29 @@ jobs:
 
   build-rust:
     strategy:
+      fail-fast: true
       matrix:
-        os: [ubuntu-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
+        os:
+          - runner: ubuntu-latest
+            name: linux
+            config: rust-config-linux.toml
+          - runner: macos-latest-xlarge
+            name: apple
+            config: rust-config-apple.toml
+    runs-on: ${{ matrix.os.runner }}
     needs: build-llvm
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: true
       - name: Install Dependencies
+        if: matrix.os.name == 'linux'
         shell: bash
         run: sudo apt-get update && sudo apt-get install -y build-essential git cmake ninja-build python3
+      - name: Install Dependencies
+        if: matrix.os.name == 'apple'
+        shell: bash
+        run: brew install git cmake ninja
       - name: Restore LLVM Cache
         id: llvm-cache-restore
         uses: actions/cache/restore@v4
@@ -81,7 +98,7 @@ jobs:
             ${{ runner.os }}-artifacts-rust-
       - name: Copy Rust Config
         shell: bash
-        run: cp rust-config-${{ matrix.os }}.toml rust/config.toml
+        run: cp ${{ matrix.os.config }} rust/config.toml
       - name: Build Rust
         shell: bash
         run: mkdir -p build/rust build/dist && cd rust && env -u GITHUB_ACTIONS ./x.py install
