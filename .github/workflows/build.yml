@@ -9,7 +9,10 @@ env:
 
 jobs:
   build-llvm:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     outputs:
       cache-primary-key: ${{ runner.os }}-artifacts-llvm-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
@@ -17,9 +20,13 @@ jobs:
         with:
           submodules: true
       - name: Install Dependencies
+        if: startsWith(matrix.os, 'ubuntu')
         shell: bash
         run: sudo apt-get update && sudo apt-get install -y build-essential git cmake ninja-build python3 ccache
-      # Get the cached build artifacts
+      - name: Install Dependencies
+        if: startsWith(matrix.os, 'macos')
+        shell: bash
+        run: brew install ccache git cmake ninja
       - name: Setup Cache
         id: cache
         uses: actions/cache@v4
@@ -43,7 +50,10 @@ jobs:
           ccache -s
 
   build-rust:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     needs: build-llvm
     steps:
       - uses: actions/checkout@v4
@@ -71,14 +81,14 @@ jobs:
             ${{ runner.os }}-artifacts-rust-
       - name: Copy Rust Config
         shell: bash
-        run: cp rust-config.toml rust/config.toml
+        run: cp rust-config-${{ matrix.os }}.toml rust/config.toml
       - name: Build Rust
         shell: bash
         run: mkdir -p build/rust build/dist && cd rust && env -u GITHUB_ACTIONS ./x.py install
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: oro-rust-toolchain-${{github.run_id}}
+          name: oro-rust-toolchain-${{runner.os}}-${{github.run_id}}
           path: build/dist
           if-no-files-found: error
           compression-level: 9

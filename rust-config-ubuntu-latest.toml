@@ -1,0 +1,42 @@
+profile = "user"
+change-id = 137170
+
+[llvm]
+download-ci-llvm = false
+
+[build]
+host = ["x86_64-unknown-linux-gnu"]
+target = ["x86_64-unknown-linux-gnu", "x86_64-unknown-oro-elf"]
+extended = true
+tools = ["cargo", "cargo-fmt", "clippy", "rustfmt", "analysis", "lld-wrapper", "rustdoc"]
+build-dir = "../build/rust"
+verbose = 2
+docs = false
+compiler-docs = false
+sanitizers = false
+build-stage = 3
+install-stage = 3
+
+[install]
+prefix = "../build/dist"
+sysconfdir = "etc"
+
+[rust]
+incremental = true
+download-rustc = false
+description = "Experimental Rust toolchain for the Oro Operating System"
+omit-git-hash = true
+channel = "dev"
+strip = true
+optimize = 3
+debug = true
+dist-src = false
+
+[target.x86_64-unknown-linux-gnu]
+llvm-config = "../build/llvm/bin/llvm-config"
+llvm-has-rust-patches = false
+
+[target.x86_64-unknown-oro-elf]
+llvm-config = "../build/llvm/bin/llvm-config"
+llvm-has-rust-patches = false
+optimized-compiler-builtins = false
