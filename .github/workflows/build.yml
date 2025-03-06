@@ -99,7 +99,16 @@ jobs:
         run: cp ${{ matrix.os.config }} rust/config.toml
       - name: Build Rust
         shell: bash
-        run: mkdir -p build/rust build/dist && cd rust && env -u GITHUB_ACTIONS ./x.py install
+        run: |
+          mkdir -p build/rust build/dist
+          export CCACHE_DIR="$(pwd)/build/rust/.ccache"
+          export CCACHE_COMPRESS=1
+          export CCACHE_COMPRESSLEVEL=6
+          export CCACHE_MAXSIZE=400M
+          mkdir -p build/rust/.ccache
+          ccache -z
+          cd rust && env -u GITHUB_ACTIONS ./x.py install
+          ccache -s
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
