@@ -76,7 +76,7 @@ jobs:
       - name: Install Dependencies
         if: matrix.os.name == 'apple'
         shell: bash
-        run: brew install --quiet git cmake ninja
+        run: brew install --quiet git cmake ninja zstd && brew link --force --overwrite zstd
       - name: Restore LLVM Cache
         id: llvm-cache-restore
         uses: actions/cache/restore@v4
