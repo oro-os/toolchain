@@ -15,7 +15,7 @@ jobs:
         os:
           - runner: ubuntu-latest
             name: linux
-          - runner: macos-latest-xlarge
+          - runner: macos-latest
             name: apple
     runs-on: ${{ matrix.os.runner }}
     outputs:
@@ -62,7 +62,7 @@ jobs:
           - runner: ubuntu-latest
             name: linux
             config: rust-config-linux.toml
-          - runner: macos-latest-xlarge
+          - runner: macos-latest
             name: apple
             config: rust-config-apple.toml
     runs-on: ${{ matrix.os.runner }}
