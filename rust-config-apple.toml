@@ -4,6 +4,7 @@ change-id = 137170
 [llvm]
 download-ci-llvm = false
 libzstd = false
+ninja = true
 
 [build]
 host = ["aarch64-apple-darwin"]

@@ -3,6 +3,7 @@ change-id = 137170
 
 [llvm]
 download-ci-llvm = false
+ninja = true
 
 [build]
 host = ["x86_64-unknown-linux-gnu"]
