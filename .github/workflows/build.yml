@@ -18,8 +18,6 @@ jobs:
           - runner: macos-latest
             name: apple
     runs-on: ${{ matrix.os.runner }}
-    outputs:
-      cache-primary-key: ${{ runner.os }}-artifacts-llvm-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -84,8 +82,8 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: build/llvm/
-          key: ${{ needs.build-llvm.outputs.cache-primary-key }}
-          restore-keys: ${{ needs.build-llvm.outputs.cache-primary-key }}
+          key: ${{ runner.os }}-artifacts-llvm-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: ${{ runner.os }}-artifacts-llvm-${{ github.run_id }}-
           fail-on-cache-miss: true
       - name: Set up Rust Cache
         id: rust-cache
