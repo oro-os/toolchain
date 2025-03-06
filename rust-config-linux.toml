@@ -17,7 +17,6 @@ compiler-docs = false
 sanitizers = false
 build-stage = 3
 install-stage = 3
-ccache = true
 
 [install]
 prefix = "../build/dist"

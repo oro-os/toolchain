@@ -77,7 +77,7 @@ jobs:
         if: matrix.os.name == 'apple'
         shell: bash
         run: |
-          brew install --quiet git cmake ninja zstd ccache && brew link --force --overwrite zstd
+          brew install --quiet git cmake ninja zstd ccache
           echo "LIBRARY_PATH=$(brew --prefix)/lib" >> $GITHUB_ENV
       - name: Restore LLVM Cache
         id: llvm-cache-restore
