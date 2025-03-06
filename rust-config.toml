@@ -5,8 +5,8 @@ change-id = 137170
 download-ci-llvm = false
 
 [build]
-host = ["x86_64-unknown-linux-gnu"]
-target = ["x86_64-unknown-linux-gnu", "x86_64-unknown-oro-elf"]
+host = ["x86_64-unknown-linux-gnu", "aarch64-apple-darwin"]
+target = ["x86_64-unknown-linux-gnu", "aarch64-apple-darwin", "x86_64-unknown-oro-elf"]
 extended = true
 tools = ["cargo", "cargo-fmt", "clippy", "rustfmt", "analysis", "lld-wrapper", "rustdoc"]
 build-dir = "../build/rust"
@@ -33,6 +33,10 @@ debug = true
 dist-src = false
 
 [target.x86_64-unknown-linux-gnu]
+llvm-config = "../build/llvm/bin/llvm-config"
+llvm-has-rust-patches = false
+
+[target.aarch64-apple-darwin]
 llvm-config = "../build/llvm/bin/llvm-config"
 llvm-has-rust-patches = false
 
