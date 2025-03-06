@@ -29,7 +29,7 @@ jobs:
       - name: Install Dependencies
         if: matrix.os.name == 'apple'
         shell: bash
-        run: brew install ccache git cmake ninja
+        run: brew install --quiet ccache git cmake ninja
       - name: Setup Cache
         id: cache
         uses: actions/cache@v4
@@ -76,7 +76,7 @@ jobs:
       - name: Install Dependencies
         if: matrix.os.name == 'apple'
         shell: bash
-        run: brew install git cmake ninja
+        run: brew install --quiet git cmake ninja
       - name: Restore LLVM Cache
         id: llvm-cache-restore
         uses: actions/cache/restore@v4
