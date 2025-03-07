@@ -15,8 +15,8 @@ verbose = 2
 docs = false
 compiler-docs = false
 sanitizers = false
-build-stage = 3
-install-stage = 3
+build-stage = 2
+install-stage = 2
 ccache = true
 
 [install]

@@ -109,7 +109,7 @@ jobs:
           export CCACHE_MAXSIZE=400M
           mkdir -p build/rust/.ccache
           ccache -z
-          cd rust && env -u GITHUB_ACTIONS ./x.py install
+          cd rust && ./x.py install
           ccache -s
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
