@@ -66,6 +66,11 @@ jobs:
     runs-on: ${{ matrix.os.runner }}
     needs: build-llvm
     steps:
+      - name: Free up filesystem space
+        shell: bash
+        run: |
+          sudo rm -rf "/usr/local/share/boost"
+          if [ ! -z "$AGENT_TOOLSDIRECTORY" ]; then sudo rm -rf "$AGENT_TOOLSDIRECTORY"; fi
       - uses: actions/checkout@v4
         with:
           submodules: true
@@ -87,6 +92,13 @@ jobs:
           key: ${{ runner.os }}-artifacts-llvm-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: ${{ runner.os }}-artifacts-llvm-${{ github.run_id }}-
           fail-on-cache-miss: true
+      - name: Free up space from LLVM cache
+        shell: bash
+        run: |
+          sudo rm -rf build/llvm/.ccache
+          ls -la build
+          ls -la build/llvm
+          du -sh build
       - name: Set up Rust Cache
         id: rust-cache
         uses: actions/cache@v4
